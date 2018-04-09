@@ -15,7 +15,10 @@ function onOpen() {
 
 function analyze() {
   var ss = SpreadsheetApp.getActive();
-  var sheet = ss.getSheetByName("Grade 7");
+  
+  for(var j = 7; j<11;j++){
+  var sheet = ss.getSheetByName("Grade "+parseInt(j));
+    console.log("Grade "+parseInt(j));
   
   var range = sheet.getDataRange().getValues();
   
@@ -42,18 +45,18 @@ function analyze() {
     }
   }
   
-  var ss = SpreadsheetApp.create("Grade 7 - Work Skills");
-  ss.insertSheet("Self-Regulation").insertImage(getChartIMG(getChart('Self-Regulation')), 1, 1);
-  ss.insertSheet("Organization").insertImage(getChartIMG(getChart('Organization')), 1, 1);
-  ss.insertSheet("Collaboration").insertImage(getChartIMG(getChart('Collaboration')), 1, 1);
-  ss.insertSheet("Independent Work").insertImage(getChartIMG(getChart('Independent Work')), 1, 1);
-  ss.insertSheet("Initiative").insertImage(getChartIMG(getChart('Initiative')), 1, 1);
-  ss.insertSheet("Responsibility").insertImage(getChartIMG(getChart('Responsibility')), 1, 1);
+  var sss = SpreadsheetApp.create("Grade "+parseInt(j)+" - Work Skills");
+  sss.insertSheet("Self-Regulation").insertImage(getChartIMG(getChart('Self-Regulation')), 1, 1);
+  sss.insertSheet("Organization").insertImage(getChartIMG(getChart('Organization')), 1, 1);
+  sss.insertSheet("Collaboration").insertImage(getChartIMG(getChart('Collaboration')), 1, 1);
+  sss.insertSheet("Independent Work").insertImage(getChartIMG(getChart('Independent Work')), 1, 1);
+  sss.insertSheet("Initiative").insertImage(getChartIMG(getChart('Initiative')), 1, 1);
+  sss.insertSheet("Responsibility").insertImage(getChartIMG(getChart('Responsibility')), 1, 1);
   
-  var fileId = ss.getId();
+  var fileId = sss.getId();
   var file = DriveApp.getFileById(fileId);
   DriveApp.getFoldersByName('Work Skills Analysis').next().addFile(file);
- 
+  }
 }
  
 function doGet() {
