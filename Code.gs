@@ -42,17 +42,59 @@ function analyze() {
     }
   }
   
-  var chartBuilder = Charts.newPieChart()
-       .setTitle('Self Regulation')
-       .setDimensions(600, 500)
-       .set3D()
-       .setDataTable(dataTable(selfReg));
+  var ss = SpreadsheetApp.create("Grade 7 - Work Skills");
+  ss.insertSheet("Self-Regulation").insertImage(getChartIMG(getChart('Self-Regulation')), 1, 1);
+  ss.insertSheet("Organization").insertImage(getChartIMG(getChart('Organization')), 1, 1);
+  ss.insertSheet("Collaboration").insertImage(getChartIMG(getChart('Collaboration')), 1, 1);
+  ss.insertSheet("Independent Work").insertImage(getChartIMG(getChart('Independent Work')), 1, 1);
+  ss.insertSheet("Initiative").insertImage(getChartIMG(getChart('Initiative')), 1, 1);
+  ss.insertSheet("Responsibility").insertImage(getChartIMG(getChart('Responsibility')), 1, 1);
   
-  var chart = chartBuilder.build();
-   return UiApp.createApplication().add(chart);
-  //console.log("Self Reg: "+selfReg+", Ind: "+indep+", Collab: "+collab+", Init: "+initiative+", Organization: "+organ+", Responsibility: "+resp);
+  var fileId = ss.getId();
+  var file = DriveApp.getFileById(fileId);
+  DriveApp.getFoldersByName('Work Skills Analysis').next().addFile(file);
+ 
 }
  
+function doGet() {
+  return HtmlService
+      .createTemplateFromFile('skills_analysis')
+      .evaluate();
+}
+
+function getChartIMG(chart) {
+ return chart.getBlob().getAs('image/png').setName("areaBlob"); 
+}
+
+function getChart(skillName, sheet){
+  
+   var chartBuilder = Charts.newPieChart()
+       .setTitle(skillName)
+       .setDimensions(600, 500);
+  
+     switch(skillName){
+      case 'Self-Regulation':
+        chartBuilder.setDataTable(dataTable(selfReg));
+        break;
+      case 'Independent Work':
+         chartBuilder.setDataTable(dataTable(indep));
+         break;
+      case 'Collaboration':
+         chartBuilder.setDataTable(dataTable(collab));
+        break;
+      case 'Initiative':
+         chartBuilder.setDataTable(dataTable(initiative));
+        break;
+      case 'Organization':
+         chartBuilder.setDataTable(dataTable(organ));
+        break;
+      case 'Responsibility':
+         chartBuilder.setDataTable(dataTable(resp));
+        break;
+    }          
+  
+  return chartBuilder.build();
+}
 function dataTable(rating){
   var data = Charts.newDataTable()
   .addColumn(Charts.ColumnType.STRING, "Rating")
