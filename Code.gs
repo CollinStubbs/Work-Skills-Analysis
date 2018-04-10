@@ -15,6 +15,9 @@ function onOpen() {
 
 function analyze() {
   var ss = SpreadsheetApp.getActive();
+      var currentD = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MMM yyyy");
+
+  var folder = DriveApp.createFolder('Work Skills Analysis - '+currentD);
   
   for(var j = 7; j<12;j++){
   var sheet = ss.getSheetByName("Grade "+parseInt(j));
@@ -55,8 +58,9 @@ function analyze() {
     
     sss.deleteSheet(sss.getSheetByName('Sheet1'));
   var fileId = sss.getId();
-  var file = DriveApp.getFileById(fileId);
-  DriveApp.getFoldersByName('Work Skills Analysis').next().addFile(file);
+  var file = DriveApp.getFileById(fileId); 
+ // DriveApp.getFoldersByName('Work Skills Analysis').next().addFile(file);
+    folder.addFile(file);
   }
 }
 
