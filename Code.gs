@@ -1,9 +1,9 @@
-var selfReg = [0,0,0,0,0]; //E,G,S,I,NI
-var collab = [0,0,0,0,0];
-var indep = [0,0,0,0,0];
-var initiative = [0,0,0,0,0];
-var organ = [0,0,0,0,0];
-var resp = [0,0,0,0,0];
+var selfReg = [['E', 0],['G',0],['S',0],['I',0],['NI',0]]; //E,G,S,I,NI
+var collab = [['E', 0],['G',0],['S',0],['I',0],['NI',0]];
+var indep = [['E', 0],['G',0],['S',0],['I',0],['NI',0]];
+var initiative = [['E', 0],['G',0],['S',0],['I',0],['NI',0]];
+var organ = [['E', 0],['G',0],['S',0],['I',0],['NI',0]];
+var resp = [['E', 0],['G',0],['S',0],['I',0],['NI',0]];
 
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
@@ -16,7 +16,7 @@ function onOpen() {
 function analyze() {
   var ss = SpreadsheetApp.getActive();
   
-  for(var j = 7; j<11;j++){
+  for(var j = 7; j<12;j++){
   var sheet = ss.getSheetByName("Grade "+parseInt(j));
     console.log("Grade "+parseInt(j));
   
@@ -46,88 +46,78 @@ function analyze() {
   }
   
   var sss = SpreadsheetApp.create("Grade "+parseInt(j)+" - Work Skills");
-  sss.insertSheet("Self-Regulation").insertImage(getChartIMG(getChart('Self-Regulation')), 1, 1);
-  sss.insertSheet("Organization").insertImage(getChartIMG(getChart('Organization')), 1, 1);
-  sss.insertSheet("Collaboration").insertImage(getChartIMG(getChart('Collaboration')), 1, 1);
-  sss.insertSheet("Independent Work").insertImage(getChartIMG(getChart('Independent Work')), 1, 1);
-  sss.insertSheet("Initiative").insertImage(getChartIMG(getChart('Initiative')), 1, 1);
-  sss.insertSheet("Responsibility").insertImage(getChartIMG(getChart('Responsibility')), 1, 1);
-  
+    createEmbeddedChart("Self-Regulation", sss);
+    createEmbeddedChart("Organization", sss);
+    createEmbeddedChart("Collaboration", sss);
+    createEmbeddedChart("Independent Work", sss);
+    createEmbeddedChart("Initiative", sss);
+  createEmbeddedChart("Responsibility", sss);
+    
+    sss.deleteSheet(sss.getSheetByName('Sheet1'));
   var fileId = sss.getId();
   var file = DriveApp.getFileById(fileId);
   DriveApp.getFoldersByName('Work Skills Analysis').next().addFile(file);
   }
 }
- 
-function doGet() {
-  return HtmlService
-      .createTemplateFromFile('skills_analysis')
-      .evaluate();
-}
 
-function getChartIMG(chart) {
- return chart.getBlob().getAs('image/png').setName("areaBlob"); 
-}
-
-function getChart(skillName, sheet){
+function createEmbeddedChart(skillName, spread){
+  var sheet = spread.insertSheet(skillName);
   
-   var chartBuilder = Charts.newPieChart()
-       .setTitle(skillName)
-       .setDimensions(600, 500);
-  
-     switch(skillName){
+   switch(skillName){
       case 'Self-Regulation':
-        chartBuilder.setDataTable(dataTable(selfReg));
+        var range = sheet.getRange(1,1,selfReg.length,selfReg[0].length).setValues(selfReg);
         break;
       case 'Independent Work':
-         chartBuilder.setDataTable(dataTable(indep));
-         break;
+          var range = sheet.getRange(1,1,indep.length,indep[0].length).setValues(indep);
+       break;
       case 'Collaboration':
-         chartBuilder.setDataTable(dataTable(collab));
+          var range = sheet.getRange(1,1,collab.length,collab[0].length).setValues(collab);
         break;
       case 'Initiative':
-         chartBuilder.setDataTable(dataTable(initiative));
+          var range = sheet.getRange(1,1,initiative.length,initiative[0].length).setValues(initiative);
         break;
       case 'Organization':
-         chartBuilder.setDataTable(dataTable(organ));
+          var range = sheet.getRange(1,1,organ.length,organ[0].length).setValues(organ);
         break;
       case 'Responsibility':
-         chartBuilder.setDataTable(dataTable(resp));
+          var range = sheet.getRange(1,1,resp.length,resp[0].length);
+       range.setValues(resp);
+       
         break;
-    }          
+    }        
+
   
-  return chartBuilder.build();
+  var chart = sheet.newChart()
+  .setChartType(Charts.ChartType.PIE)
+  .addRange(range)
+  .setPosition(4, 4, 0, 0)
+  .setOption('title', skillName)
+  .setOption('legend', {textStyle: {fontSize: 14, bold: true, }})
+  .setOption('pieSliceText', 'value')
+  .build()
+ 
+
+ sheet.insertChart(chart);
 }
-function dataTable(rating){
-  var data = Charts.newDataTable()
-  .addColumn(Charts.ColumnType.STRING, "Rating")
-  .addColumn(Charts.ColumnType.NUMBER, "Count")
-  .addRow(['E', rating[0]])
-  .addRow(['G', rating[1]])
-  .addRow(['S', rating[2]])
-  .addRow(['I', rating[3]])
-  .addRow(['NI', rating[4]])
-  .build();
-  return data;
-}
+
 
 //increases the count for that skills rating
 function addSkill(skill, rating){
   switch(rating){
     case 'E':
-      skill[0]++;
+      skill[0][1]++;
       break;
     case 'G':
-      skill[1]++;
+      skill[1][1]++;
       break;
     case 'S':
-      skill[2]++;
+      skill[2][1]++;
       break;
     case 'I':
-      skill[3]++;
+      skill[3][1]++;
       break;
     case 'NI':
-      skill[4]++;
+      skill[4][1]++;
       break;
   }
   
