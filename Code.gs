@@ -8,7 +8,7 @@ var resp = [['E', 0],['G',0],['S',0],['I',0],['NI',0]];
 var NITracker = [[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]];
 var folder = null;
 var fullRange = null;
-var students = [{},{},{},{},{}]
+var students = [{},{},{},{},{}];
 
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
@@ -143,16 +143,51 @@ function createDataPage(){
   sheet.getRange(4, 2, 1, 7).setValues([['Grade 9\'s', NITracker[2][0], NITracker[2][1], NITracker[2][2], NITracker[2][3], NITracker[2][4], NITracker[2][5]]]);
   sheet.getRange(5, 2, 1, 7).setValues([['Grade 10\'s', NITracker[3][0], NITracker[3][1], NITracker[3][2], NITracker[3][3], NITracker[3][4], NITracker[3][5]]]);
   sheet.getRange(6, 2, 1, 7).setValues([['Grade 11\'s', NITracker[4][0], NITracker[4][1], NITracker[4][2], NITracker[4][3], NITracker[4][4], NITracker[4][5]]]);
-  sheet.getRange(7, 2, 1, 7).setValues([['Mean\'s',  means[0],  means[1],  means[2],  means[3],  means[4],  means[5]]]);
-  sheet.getRange(8, 1, 1, 2).setValues([['Mean NI Count per Grade', mean]]);
+  sheet.getRange(7, 2, 1, 7).setValues([['Means',  means[0],  means[1],  means[2],  means[3],  means[4],  means[5]]]);
+  
   sheet.getRange(9, 1, 1, 2).setValues([['NI count for 7', grades[0]]]);
   sheet.getRange(10, 1, 1, 2).setValues([['NI count for 8', grades[1]]]);
   sheet.getRange(11, 1, 1, 2).setValues([['NI count for 9', grades[2]]]);
   sheet.getRange(12, 1, 1, 2).setValues([['NI count for 10', grades[3]]]);
   sheet.getRange(13, 1, 1, 2).setValues([['NI count for 11', grades[4]]]);
   
+  sheet.getRange(14, 1, 1, 2).setValues([['Mean NI Count per Grade', mean]]);
   sheet.getRange(15, 1, 1, 2).setValues([['Standard Deviation', '=STDEVP('+grades+')']]);
+  var tops = getTops();
   
+  for(var i = 0; i<5; i++){
+    sheet.getRange((17), 2+(i*2), 1, 2).setValues([["Grade "+(7+i).toString(), "NI Count"]]);
+    sheet.getRange((18), 2+(i*2), 5, 2).setValues(tops[i]); 
+    console.log(tops[i]);
+  }
+  
+}
+
+function getTops(){
+  
+  var tops = [];
+  tops.push(comp(students[0]));
+  tops.push(comp(students[1]));
+  tops.push(comp(students[2]));
+  tops.push(comp(students[3]));
+  tops.push(comp(students[4]));
+            
+            
+  return tops;
+}
+
+function comp(dict) {
+  // Create items array
+  var items = Object.keys(dict).map(function(key) {
+    return [key, dict[key]];
+  });
+  
+  // Sort the array based on the second element
+  items.sort(function(first, second) {
+    return second[1] - first[1];
+  });
+
+  return items.slice(0,5);
 }
 
 function reset(){
@@ -223,15 +258,22 @@ function addSkill(skill, rating, i){
       break;
     case 'NI':
       skill[4][1]++;
+      
       var name = fullRange[i][4]+fullRange[i][6];
-      if(name in students){
-       students[name]++ 
+      var grade = getGrade(i);
+      if(name in students[grade]){
+       students[grade][name]++;
       }
       else{
-        students[name] = 1;
+        students[grade][name] = 1;
       }
       
       break;
   }
   
+}
+
+function getGrade(i){
+ var curGrade = fullRange[i][1].substring(6);
+  return Number(curGrade)-7;
 }
