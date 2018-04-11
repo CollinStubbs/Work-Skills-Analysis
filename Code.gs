@@ -7,6 +7,8 @@ var resp = [['E', 0],['G',0],['S',0],['I',0],['NI',0]];
 
 var NITracker = [[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]];
 var folder = null;
+var fullRange = null;
+var students = [{},{},{},{},{}]
 
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
@@ -28,27 +30,27 @@ function analyze() {
     var sheet = ss.getSheetByName("Grade "+parseInt(j));
     console.log("Grade "+parseInt(j));
     
-    var range = sheet.getDataRange().getValues();
+    fullRange = sheet.getDataRange().getValues();
     
-    for(var i = 0; i<range.length; i++){
-      switch(range[i][9]){
+    for(var i = 0; i<fullRange.length; i++){
+      switch(fullRange[i][9]){
         case 'Self-Regulation':
-          addSkill(selfReg, range[i][10]);
+          addSkill(selfReg, fullRange[i][10], i);
           break;
         case 'Independent Work':
-          addSkill(indep, range[i][10]);
+          addSkill(indep, fullRange[i][10], i);
           break;
         case 'Collaboration':
-          addSkill(collab, range[i][10]);
+          addSkill(collab, fullRange[i][10], i);
           break;
         case 'Initiative':
-          addSkill(initiative, range[i][10]);
+          addSkill(initiative, fullRange[i][10], i);
           break;
         case 'Organization':
-          addSkill(organ, range[i][10]);
+          addSkill(organ, fullRange[i][10], i);
           break;
         case 'Responsibility':
-          addSkill(resp, range[i][10]);
+          addSkill(resp, fullRange[i][10], i);
           break;
       }
     }
@@ -128,26 +130,28 @@ function createDataPage(){
   
   
       
-  sheet.getRange(1, 3, 1, 1).setValues([['Mean NI\'s']]);
-  sheet.getRange(1, 4, 1, 1).setValues([['Self-Regulation NI\'s']]);
-  sheet.getRange(1, 5, 1, 1).setValues([['Organization NI\'s']]);
-  sheet.getRange(1, 6, 1, 1).setValues([['Collaboration NI\'s']]);
-  sheet.getRange(1, 7, 1, 1).setValues([['Independent Work NI\'s']]);
-  sheet.getRange(1, 8, 1, 1).setValues([['Initiative NI\'s']]);
-  sheet.getRange(1, 9, 1, 1).setValues([['Responsibility NI\'s']]);
+
+  sheet.getRange(1, 3, 1, 1).setValues([['Self-Regulation NI\'s']]);
+  sheet.getRange(1, 4, 1, 1).setValues([['Organization NI\'s']]);
+  sheet.getRange(1, 5, 1, 1).setValues([['Collaboration NI\'s']]);
+  sheet.getRange(1, 6, 1, 1).setValues([['Independent Work NI\'s']]);
+  sheet.getRange(1, 7, 1, 1).setValues([['Initiative NI\'s']]);
+  sheet.getRange(1, 8, 1, 1).setValues([['Responsibility NI\'s']]);
   
-  sheet.getRange(2, 2, 1, 8).setValues([['Grade 9\'s', means[0], NITracker[0][0], NITracker[0][1], NITracker[0][2], NITracker[0][3], NITracker[0][4], NITracker[0][5]]]);
-  sheet.getRange(3, 2, 1, 8).setValues([['Grade 9\'s', means[0], NITracker[1][0], NITracker[1][1], NITracker[1][2], NITracker[1][3], NITracker[1][4], NITracker[1][5]]]);
-  sheet.getRange(4, 2, 1, 8).setValues([['Grade 9\'s', means[0], NITracker[2][0], NITracker[2][1], NITracker[2][2], NITracker[2][3], NITracker[2][4], NITracker[2][5]]]);
-  sheet.getRange(5, 2, 1, 8).setValues([['Grade 9\'s', means[0], NITracker[3][0], NITracker[3][1], NITracker[3][2], NITracker[3][3], NITracker[3][4], NITracker[3][5]]]);
-  sheet.getRange(6, 2, 1, 8).setValues([['Grade 9\'s', means[0], NITracker[4][0], NITracker[4][1], NITracker[4][2], NITracker[4][3], NITracker[4][4], NITracker[4][5]]]);
-  
+  sheet.getRange(2, 2, 1, 7).setValues([['Grade 7\'s', NITracker[0][0], NITracker[0][1], NITracker[0][2], NITracker[0][3], NITracker[0][4], NITracker[0][5]]]);
+  sheet.getRange(3, 2, 1, 7).setValues([['Grade 8\'s', NITracker[1][0], NITracker[1][1], NITracker[1][2], NITracker[1][3], NITracker[1][4], NITracker[1][5]]]);
+  sheet.getRange(4, 2, 1, 7).setValues([['Grade 9\'s', NITracker[2][0], NITracker[2][1], NITracker[2][2], NITracker[2][3], NITracker[2][4], NITracker[2][5]]]);
+  sheet.getRange(5, 2, 1, 7).setValues([['Grade 10\'s', NITracker[3][0], NITracker[3][1], NITracker[3][2], NITracker[3][3], NITracker[3][4], NITracker[3][5]]]);
+  sheet.getRange(6, 2, 1, 7).setValues([['Grade 11\'s', NITracker[4][0], NITracker[4][1], NITracker[4][2], NITracker[4][3], NITracker[4][4], NITracker[4][5]]]);
+  sheet.getRange(7, 2, 1, 7).setValues([['Mean\'s',  means[0],  means[1],  means[2],  means[3],  means[4],  means[5]]]);
   sheet.getRange(8, 1, 1, 2).setValues([['Mean NI Count per Grade', mean]]);
   sheet.getRange(9, 1, 1, 2).setValues([['NI count for 7', grades[0]]]);
   sheet.getRange(10, 1, 1, 2).setValues([['NI count for 8', grades[1]]]);
   sheet.getRange(11, 1, 1, 2).setValues([['NI count for 9', grades[2]]]);
   sheet.getRange(12, 1, 1, 2).setValues([['NI count for 10', grades[3]]]);
   sheet.getRange(13, 1, 1, 2).setValues([['NI count for 11', grades[4]]]);
+  
+  sheet.getRange(15, 1, 1, 2).setValues([['Standard Deviation', '=STDEVP('+grades+')']]);
   
 }
 
@@ -203,7 +207,7 @@ function createEmbeddedChart(skillName, spread){
 
 
 //increases the count for that skills rating
-function addSkill(skill, rating){
+function addSkill(skill, rating, i){
   switch(rating){
     case 'E':
       skill[0][1]++;
@@ -219,6 +223,14 @@ function addSkill(skill, rating){
       break;
     case 'NI':
       skill[4][1]++;
+      var name = fullRange[i][4]+fullRange[i][6];
+      if(name in students){
+       students[name]++ 
+      }
+      else{
+        students[name] = 1;
+      }
+      
       break;
   }
   
