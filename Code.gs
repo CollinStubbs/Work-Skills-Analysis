@@ -21,6 +21,7 @@ function onOpen() {
 function analyze() {
   var ss = SpreadsheetApp.getActive();
   var currentD = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "MMM yyyy");
+  var arRange = [];
   
   folder = DriveApp.createFolder('Work Skills Analysis - '+currentD);
   
@@ -31,6 +32,7 @@ function analyze() {
     console.log("Grade "+parseInt(j));
     
     fullRange = sheet.getDataRange().getValues();
+    arRange.push(fullRange);
     
     for(var i = 0; i<fullRange.length; i++){
       switch(fullRange[i][9]){
@@ -79,10 +81,10 @@ function analyze() {
     
     reset();
   }
-  createDataPage();
+  createDataPage(arRange);
 }
 
-function createDataPage(){
+function createDataPage(arRange){
   var mean = 0;
   var means = [0,0,0,0,0,0];
   var grades = [0,0,0,0,0];
@@ -156,11 +158,66 @@ function createDataPage(){
   var tops = getTops();
   
   for(var i = 0; i<5; i++){
-    sheet.getRange((17), 2+(i*2), 1, 2).setValues([["Grade "+(7+i).toString(), "NI Count"]]);
-    sheet.getRange((18), 2+(i*2), 5, 2).setValues(tops[i]); 
-    console.log(tops[i]);
+    var grSheet = ss.insertSheet("Grade " + (7+i).toString());
+    grSheet.getRange(1, 1, 1, 8).setValues([["Names","Self-Regulation NI's", "Independent Work's", "Collaboration's", "Initiative's", "Organization's", "Responsibility's", "Sums"]]);
+    // for(var j = 0; j<5; j++){
+    var arHolder = [getStudentAr(tops[i][0][0], arRange[i]),getStudentAr(tops[i][1][0], arRange[i]),getStudentAr(tops[i][2][0], arRange[i]),getStudentAr(tops[i][3][0], arRange[i]),getStudentAr(tops[i][4][0], arRange[i])];
+    grSheet.getRange(2,1,5,8).setValues(arHolder); //5 students, 6 skills and 1 name cell
+    // }
+    
+    //    sheet.getRange((17), 2+(i*2), 1, 2).setValues([["Grade "+(7+i).toString(), "NI Count"]]);
+    //    sheet.getRange((18), 2+(i*2), 5, 2).setValues(tops[i]); 
+    //    console.log(tops[i]);
   }
   
+}
+
+function getStudentAr(name, arRange){
+  var studentAr = [name, 0,0,0,0,0,0];
+  
+  for(var i = 0; i<arRange.length; i++){
+   // console.log(arRange.length);
+    if(name == (arRange[i][4]+arRange[i][6])){
+      
+      switch(arRange[i][9]){
+        case 'Self-Regulation':
+          if(arRange[i][10] == "NI"){
+            studentAr[1]++;
+          }
+          break;
+        case 'Independent Work':
+          if(arRange[i][10] == "NI"){
+            studentAr[2]++;
+          }
+          break;
+        case 'Collaboration':
+          if(arRange[i][10] == "NI"){
+            studentAr[3]++;          
+          }
+          break;
+        case 'Initiative':
+          if(arRange[i][10] == "NI"){
+            studentAr[4]++;          
+          }
+          break;
+        case 'Organization':
+          if(arRange[i][10] == "NI"){
+            studentAr[5]++;          
+          }
+          break;
+        case 'Responsibility':
+          if(arRange[i][10] == "NI"){
+            studentAr[6]++;          
+          }
+          break;
+        default:
+          break;
+      }       
+    }
+  }
+  console.log(name+": "+studentAr);
+  studentAr.push( "=SUM("+studentAr.slice(1,7)+")");
+  return studentAr; 
 }
 
 function getTops(){
