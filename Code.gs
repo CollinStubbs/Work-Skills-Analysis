@@ -27,7 +27,6 @@ function analyze() {
   
   for(var j = 7; j<12;j++){
     
-    
     var sheet = ss.getSheetByName("Grade "+parseInt(j));
     console.log("Grade "+parseInt(j));
     
@@ -159,7 +158,7 @@ function createDataPage(arRange){
   
   for(var i = 0; i<5; i++){
     var grSheet = ss.insertSheet("Grade " + (7+i).toString());
-    grSheet.getRange(1, 1, 1, 8).setValues([["Names","Self-Regulation NI's", "Independent Work's", "Collaboration's", "Initiative's", "Organization's", "Responsibility's", "Sums"]]);
+    grSheet.getRange(1, 1, 1, 8).setValues([["Names","Self-Regulation NI's", "Independent Work NI's", "Collaboration NI's", "Initiative NI's", "Organization NI's", "Responsibility NI's", "Sums"]]);
     // for(var j = 0; j<5; j++){
     var arHolder = [getStudentAr(tops[i][0][0], arRange[i]),getStudentAr(tops[i][1][0], arRange[i]),getStudentAr(tops[i][2][0], arRange[i]),getStudentAr(tops[i][3][0], arRange[i]),getStudentAr(tops[i][4][0], arRange[i])];
     grSheet.getRange(2,1,5,8).setValues(arHolder); //5 students, 6 skills and 1 name cell
